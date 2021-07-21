@@ -1,0 +1,107 @@
+---
+title: "ProbabilityII-Answers"
+author: "Justin Pierce"
+date: "7/9/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+
+library(kableExtra)
+library(ggplot2)
+```
+
+1. What is the difference between discrete and continuous variables?
+    + Discrete variables have "discrete" outcomes; they are indivudally separate and distinct from one another. There is no data points between outcomes and thus no gray area between them. 
+    + Continuous data, on the other hand, can have a nearly infinite number of data points between any given set of outcomes. There is thus one continuous space, rather individual outcomes
+2. What is a distribution? 
+    + A Distribution is a list of all the possible outcomes of a random variable along with the corresponding probability with which they occur.
+    + Formally, they are functions which assign probability to the possible outcomes
+3. What is the difference between the PMF, PDF and CDF? What is the difference between the CDF for discrete and continuous variables? 
+    + The PMF, or the Probability Mass Function, is a function that provides us the probability of a given value, x, in a discrete random variable 
+    + The PDF, or the Probability Density Function, is a function that provides us the probability that the value of a continuous random variable falls within a particular range of values.  
+4. What is a random variable? 
+    + A random variable is a process or mechanism that assigns the value of a variable in different cases. It is a variable whose value is the outcome of a random event.  
+5. Political science graduate students are asked to read many articles per week. Table 1 shows, for a given number of articles, how many graduate students read those articles. Use the table to answer the following questions.
+```{r}
+`Number of Articles`=c(1 , 2, 3, 4, 5, 6, 7, 8, 9, 10)
+`Number of Grad Students who read that amount`=c(0 ,2 ,2, 4,3,3, 5, 7,8,5)
+Tbl=cbind(`Number of Articles`, `Number of Grad Students who read that amount`)
+Tbl=as.data.frame(Tbl)
+```
+    + Is the number of articles a discrete or continuous variable? 
+        - The number of articles is a discrete variable. 
+    + Create a graph of the distribution.
+    
+```{r}
+ggplot(Tbl, aes(x=`Number of Articles`, y=`Number of Grad Students who read that amount`)) +
+    geom_bar(stat="identity", fill="steelblue") +
+    ggtitle("The Number of articles read by graduate students")+
+    theme_minimal()
+
+```
+
+
+    
+```{r, results=F}
+Tbl_EV=Tbl
+Tbl_EV$`f(x)`=Tbl_EV$`Number of Grad Students who read that amount`/sum(Tbl_EV$`Number of Grad Students who read that amount`)
+Tbl_EV$`xf(x)`=Tbl_EV$`Number of Articles`*Tbl_EV$`f(x)`
+EV=sum(Tbl_EV$`xf(x)`)
+```
++ What is the expected value, or average number of articles read per week?
+    - Step 1: find the f(x) for each article. This is the probability a student read the number of article. For each number of articles read we can divide the number of students who read that many articles.   
+    - Step 2: Next, we multiple the f(x) by x to get xf(x).
+    - Step 3: Finally, we sum them together to get `r round(print(EV),2)`
+    
+    ```{r, out.width="4in", fig.align="center"}
+kable(Tbl_EV, format="latex",booktabs=T, caption="Mean Articles Read.", label = "EV")%>%
+        kable_styling(latex_options=c("HOLD_position", "striped"),position="center",full_width = F)
+```
+   
+   - This of course produces the same result as if we multiple the number of articles by the number of students who read those artices, added that value up and then divided by the number of students. This is perhaps the more common way of calculating mean. 
+    
+```{r, results=F}
+Tbl_EV2=Tbl
+Tbl_EV2$ArtsXStudents=Tbl_EV2$`Number of Articles`*Tbl_EV2$`Number of Grad Students who read that amount`
+sum(Tbl_EV2$ArtsXStudents)/sum(Tbl_EV2$`Number of Grad Students who read that amount`)
+```
+
+        
+```{r, out.width="4in", fig.align="center"}
+kable(Tbl_EV2, format="latex",booktabs=T, caption="Mean Articles Read version 2.", label = "EV2")%>%
+        kable_styling(latex_options=c("HOLD_position", "striped"),position="center",full_width = F)
+```
+
+
+```{r, results=F}
+Tbl_Var=Tbl
+Tbl_Var$`f(x)`=Tbl_Var$`Number of Grad Students who read that amount`/sum(Tbl_Var$`Number of Grad Students who read that amount`)
+Tbl_Var$`x^2f(x)`= Tbl_Var$`f(x)`*(Tbl_Var$`Number of Articles`^2)
+Tbl_Var$`xf(x)`=Tbl_Var$`Number of Articles`*Tbl_Var$`f(x)`
+Xsquared=sum(Tbl_Var$`x^2f(x)`)
+X=sum(Tbl_Var$`xf(x)`)
+Var=sum(Tbl_Var$`x^2f(x)`)-sum(Tbl_Var$`xf(x)`)
+colnames(Tbl_Var)[2]="Grad Students"
+colnames(Tbl_Var)[4]="X squared * f(x)"
+Tbl_Var
+```
+
+
++ What is the variance?
+    - Step 1: We take the f(x) and multiply it by the square of x.
+    - Step 2: We sum $x^2f(x)$,`r Xsquared`,and then subtract the sum of xf(x), `r X` to get `r Var`.
+    
+```{r}
+kable(Tbl_Var, format="latex",booktabs=T, caption="Variance of Number of Articles Read.", label = "Var")%>%
+        kable_styling(latex_options=c("HOLD_position", "striped"),position="center",full_width = F) 
+```    
+    
+```{r}
+SD=sqrt(Var)
+```
+
++ What is the standard deviation? 
+    -This one's easy! We get the square root of the variance: `r SD`
+

@@ -1,0 +1,18 @@
+---
+title: "Further Reading"
+author: "Justin Pierce"
+date: "7/9/2021"
+output: pdf_document
+---
+
+* Data Types: https://statisticsbyjim.com/basics/data-types/
+* Another Data Types: https://www.six-sigma-material.com/Data-Classification.html
+* Probability Distributions: https://towardsdatascience.com/probability-concepts-explained-probability-distributions-introduction-part-3-4a5db81858dc
+* Another on distributions: https://www.investopedia.com/terms/p/probabilitydistribution.asp
+* Random Variables: https://web.stanford.edu/class/polisci100a/newprob2.pdf
+* Normal Distribution: https://www.statisticshowto.com/probability-and-statistics/normal-distributions/
+* CLT: https://www.statisticshowto.com/probability-and-statistics/normal-distributions/central-limit-theorem-definition-examples/
+* Standard Deviation and Variance: https://www.mathsisfun.com/data/standard-deviation.html
+* Law of Large Numbers: https://statisticsbyjim.com/basics/law-of-large-numbers/
+* Another Law of Large Numbers: https://www.investopedia.com/terms/l/lawoflargenumbers.asp
+* Population vs Sample: https://www.scribbr.com/methodology/population-vs-sample/

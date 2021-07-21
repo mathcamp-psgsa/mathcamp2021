@@ -1,0 +1,35 @@
+---
+title: "Probability II-Problem Sets"
+author: "Justin Pierce"
+date: "8/19/2021"
+output: pdf_document
+fontsize: 12pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+library(kableExtra)
+```
+
+1. What is the difference between discrete and continuous variables? 
+2. What is a distribution? 
+3. What is the difference between the PMF, PDF and CDF? What is the difference between the CDF for discrete and continuous variables? 
+4. What is a random variable? 
+5. Political science graduate students are asked to read many articles per week. Table 1 shows, for a given number of articles, how many graduate students read those articles. Use the table to answer the following questions.
+    + Is the number of articles a discrete or continuous variable? 
+    + Create a graph of the distribution.
+    + What is the expected value, or average number of articles read per week? 
+    + What is the variance?
+    + What is the standard deviation? 
+
+```{r}
+`Number of Articles`=c(1 , 2, 3, 4, 5, 6, 7, 8, 9, 10)
+`Number of Grad Students who read that amount`=c(0 ,2 ,2, 4,3,3, 5, 7,8,5)
+Tbl=cbind(`Number of Articles`, `Number of Grad Students who read that amount`)
+```
+
+```{r Arts}
+kable(Tbl, format="latex",booktabs=T, caption="Number of Articles Read Per Week.", label = "Arts")%>%
+        kable_styling(latex_options=c("HOLD_position", "striped"),position="center",full_width = F)
+```
+

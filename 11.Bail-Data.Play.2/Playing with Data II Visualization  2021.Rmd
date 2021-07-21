@@ -1,0 +1,270 @@
+---
+title: 'Playing with Data II: Visualization'
+author: "Kristin Bail"
+date: "July 14, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Hi everyone,
+
+This is another of your friendly neighborhood data visualizers, Kristin. Previous sessions have 
+acquainted you with some methods for getting to know your data. In this portion of the math
+camp series, we'll be discussing some of the first steps to take if you want to display it 
+graphically.
+
+Data analysis is one of the core parts of your graduate training, and growing your data 
+visualization skills will help you understand your data's structure and how to best analyze it. Good
+data visualization also helps make your research more accessible to other scholars and the general 
+public, displaying the relationships you detect in an easy to follow way. The glut of data available
+to social and data scientists has only increased the importance of being able to "show your data" in
+a useful and clear way.  
+
+Data science and R coding can be intimidating, but I hope to equip you with some basic tools that 
+will ease you in to the data visualization process. With this in mind, this document is divided into 
+three basic parts: 1) some first steps we can take when looking for patterns in our data; 2) basic 
+data visualization; and 3) visualizing regression results. These parts ascend in order of difficulty.
+If you feel comfortable with some of the basics of base R visualization, feel free to skip to the 
+later sections. And if you don't feel up to the more complicated stuff and want to keep it simple, 
+save the later portions for another day!
+
+In part 1 I outline some of the most basic ways we display our data and the information we can glean
+from doing so. Part 2 uses a basic dataset in R, 'iris,' to try out some different approaches to 
+graphic visualization. The third part pairs the same dataset with regression analysis to generate 
+regression tables and plot regression coefficient tables in fancy ways. As it is difficult to quickly
+glean meaning from regression tables, the latter is especially applicable for presentations of all 
+sorts.
+
+##1. Why Visualize?
+###Getting to know your data
+
+Political science researchers use data from many sources and on diverse subjects: cross-national 
+survey data from Afrobarometer, World Bank data about GDP growth and poverty rates, or perhaps 
+original data collected through the PS subject pool. Whichever data you use, among the first
+things you'll want to do is see what the data look like. While values such as the mean, standard
+deviation, or correlation coefficients can convey important information about the spread of the
+data, seeing the data helps us understand other important factors such as the distribution or the 
+presence of outliers. 
+
+Let's first start with some basic commands. As you've probably seen in other sessions, I will use a #
+to tell R what is code it should pay attention to and what it should ignore. 
+
+Let's first see the entire dataset we are using today, `iris.' The help() command opens a description
+in the R environment on the right, telling us that the dataset contains measurements in centimeters 
+of the variables for 50 flowers from each of three species of flowers.
+
+```{r}
+
+#help(iris)
+
+#This code will open a new window with a spreadsheet showing the dataset. You see five columns and 150 rows
+View(iris)
+
+colnames(iris) # will show the names of columns. This is helpful when you have hundreds of columns in your dataset
+
+str(iris) # conveys the structure of the dataset, useful when you want to know the type (`numeric', `factor', `character') of each variable. This command tells us that we have 150 observations and that four #variables are numeric and one is a factor with three levels. 
+
+```
+
+While these base R commands are often enough to tell us what we need or want to know, other R 
+packages do it prettier. For example, "stargazer" is a good tool to show descriptive statistics and 
+also regression tables. 
+```{r}
+#Remove the # from the line of code below if you don't already have the stargazer package installed
+#install.packages("stargazer")
+
+stargazer::stargazer(iris, type = "text")
+```
+
+##2. Basic Plots
+Time to really visualize! Often how we analyze data hinges on how the data are distributed. Is the 
+distribution normal or skewed? Are the data scattered across a wide range of values or clumped on one
+end of the scale? Histograms help us answer that question. Using the hist() command generates a 
+histogram that shows us how many observations fall within a specific range of values. Let's say we 
+want to see the variation in petal width or sepal length across the iris sample. 
+
+```{r}
+hist(iris$Petal.Width) #Using $ designates which column in the dataset R is using 
+#Or sepal length
+hist(iris$Sepal.Length)
+
+```
+
+Using the above histograms, we see that the sample's petal width is kind of skewed to the left, with 
+approximately 50 irises having a petal width of less than .5 centimeters. Sepal length, with the bulk
+of the observations landing in the middle and relatively few on the tails, more closely resembles the
+bell curve of a normal distribution. This information can have consequences for how we analyze our 
+data later. 
+
+We can also make box plots, which show us the spread and centers of each variable with a simple box shape. The bold line in the middle distinguishes the mean. Measures of spread include the interquartile range, minimum, and maximum. 
+```{r}
+#The code below gives us a basic plot conveying variation in petal length by iris species
+#boxplot(iris$Petal.Length~iris$Species)
+
+#Adding a couple of parameters to our plots changes the axis labels and makes the whole thing look better: 
+boxplot(iris$Petal.Length~iris$Species, main="Petal Length by Iris Species",
+        xlab = "Iris Species", ylab = "Petal Length in cm")
+
+
+```
+
+The above box plot indicates that across species, some irises are much smaller on average than 
+others. We can also observe that species such as the virginica have a much wider range of petal 
+lengths. 
+
+One of the things we're often most interested in is the strength of association between two 
+variables. Let's say that we have a **hypothesis** that petal length may be consequential for the 
+width of a petal. So we think maybe petal length might help explain petal width. We want to know if 
+there is a statistically significant relationship between the two such that the observed petal 
+measurements can't be random, or the product of chance. Generating a scatter plot is typically a 
+first step in discerning the relationship between variables because they position observations along 
+a plane in accordance to numeric variables. From a cursory assessment of the scatter plot below, it 
+seems as though there is a positive relationship between petal width and length, indicating our 
+hypothesis *might* be right. 
+
+The code below gives you two ways to make similar scatter plots. 
+
+```{r}
+#with(iris,plot(Petal.Length~Petal.Width)) # This will create a scatterplot on the lower-right panel of R studio. OR:
+
+# You can specify your x and y in `plot()' command. 
+plot(x=iris$Petal.Length, y=iris$Petal.Width, main = "Are Petal Length and Petal Width Related?",
+     xlab = "Petal Length (in cm)", ylab = "Petal Width (in cm)") 
+
+```
+
+###Practice
+1. Use the hist() command to plot the distribution of the variable iris$Sepal.Width. Make sure to add
+a title and axis labels
+```{r}
+
+#hist()
+```
+
+
+2. Make a scatter plot of the data using the plot() command, this time putting sepal length on the 
+y-axis and sepal length on the x. Be sure to provide accurate and clear labels.
+
+```{r}
+
+#plot()
+```
+
+
+##3. Visualizing Regression Results
+###3.1 Bivariate Relationships
+
+The scatter plot we made above gives a fair idea of where the data fall, but doesn't give a very 
+precise picture about the strength of the relationship between petal length and width. Are irises 
+with longer petals really more likely to have to have wider petals? A useful way to assess whether 
+there is a trend in the data is to estimate a basic linear regression model. A regression estimates 
+the strength of association between variables, in this case petal width and length. We can use the 
+lm() function to estimate a linear regression:
+
+```{r}
+fit<- lm(Petal.Width~Petal.Length, data=iris) #assigns regression results to the object, fit
+```
+```{r, message=FALSE, warning=FALSE}
+summary(fit) # The summary() command shows the regression results nicely. Most of the time people focus on the 'stars' to see whether the relationship is statistically significant. 
+
+stargazer::stargazer(fit, type="text") # this one is a fancier version, which more closely resembles what you see in academic articles. We gaze at stars (*), ergo `stargazer'.
+```
+Based on the p-values observed in our results (p<.01), there is a statistically significant 
+relationship between the two variables. This suggests that the relationship between petal length and 
+width isn't the product of chance. Here the regression coefficient is 0.416, meaning there is a 
+positive relationship between the two variables. So the wider petals are, the longer they tend to be!
+We'll plot the relationship on a graph, but we'll use a slightly prettier visualization tool that 
+will come in handy for courses, ggplot2. First let's generate the relevant scatter plot.
+
+```{r, message=FALSE, warning=FALSE}
+#install.packages("tidyverse") #Remove the # if you haven't already installed the relevant package, tidyverse. It might take awhile. 
+library(ggplot2)
+#ggplot(iris, aes(y=Petal.Length, x= Petal.Width))+ geom_point() #basic plot of the two variables. 
+#The geom_point parameter is used to make scatter plots, but you can change it according to the kind of graph you want to generate. 
+ggplot(iris, aes(y=Petal.Length, x= Petal.Width))+ geom_point() + theme_bw() #the theme_bw changes the color scheme of the figure and makes it not ugly anymore!
+```
+
+And now let's add our regression trend line to the scatter plot. The code below adds the 
+geom_smooth() layer to overlay a regression line onto the plot. This is probably close to the graphs 
+you will use in seminar papers: data points and a regression line.
+```{r, message=FALSE, warning=FALSE}
+  
+ggplot(iris, aes(y= Petal.Width, x= Petal.Length)) + geom_point(shape=1) + theme_bw() +
+  geom_smooth(method="lm", formula=y~x) 
+
+```
+
+*Look at that beautiful linearity! *
+
+###Practice
+Replace the relevant portions of the below code to generate a new figure, this time using Sepal.Width and Sepal.Length. Are you bold enough to try adding axis labels?
+```{r}
+
+#ggplot(iris, aes(y= Some.Width, x= Some.Length)) + geom_point(shape=1) + theme_bw() +
+#  geom_smooth(method="what does lm stand for?", formula=y*x) # formula?
+```
+
+###3.2 Coefficient Plots
+Regression results can also be conveyed using coefficient plots. These plots are more intuitive and 
+easier to quickly interpret than regression tables, making them especially great for 
+presentations. To do this we'll be using a new package, sjPlot, in conjunction with the 'plot model' 
+command. Plotting coefficients of bivariate relationships is kind of uninteresting, so we'll add in 
+some additional independent variables. The inclusion of these variables into a regression model will 
+more closely resemble the work you'll do in the future. 
+
+```{r,message=FALSE, warning=FALSE}
+#library(ggplot2) #just in case
+#install.packages("sjPlot") #more packages! Go get a snack
+library(sjPlot)
+```
+```{r}
+#estimating a new linear regression with the additional independent variables
+fit2 <- lm(Petal.Width~Petal.Length+Sepal.Length+Sepal.Width, data=iris)
+
+#plotting the coefficients of the new linear model we made, fit2
+plot_model(fit2,vline.color = "darkred") + theme_bw()
+
+```
+
+What does this graphic summary of the three regression coefficients tell us? Using petal width as our
+outcome variable, we can see that the coefficients of all three causal variables are distinguishable 
+from zero. This means that they have *some* effect on our outcome of interest. Their standard 
+deviation lines do not touch the vertical zero line, indicating that the results are statistically 
+significant. And we can see that the direction of effect is different only with the `Sepal.Length,'
+variable, which is alone in its negative association with petal width. So we get a lot of useful information from a single plot!
+
+###Practice
+There are many built in datasets provided with R. Let's use one to create a different coefficient plot. 
+
+```{r}
+#use the dataset mpg, and look at it:
+#help(mpg)
+colnames(mpg)
+str(mpg)
+
+# first create a regression model of your choice. Using cty as your outcome variable, choose three causal variables to place in the IV slots: 
+#fit3 <- lm(cty ~ Your_IV1 + Your_IV2 + Your_IV3, data=mpg)
+
+# Now, create a coefficient plot!
+#plot_model(fit3,vline.color = "gray80") + theme_bw()
+```
+
+## Wrap-up
+In this section we discussed visualizing data using R, focusing on showing the distribution and 
+spread of the dataset as well as displaying regression results. I shared certain commands, 
+functions, and packages that I think will be especially useful for you and that many graduate 
+students use in our research. Because this Rmarkdown document includes only the basic steps of 
+visualization, I recommend visiting the following websites if you wish to learn more about the 
+options available to you. 
+
+###References: 
+
+- Top 50 ggplot2: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html 
+
+- Color customization in ggplot2:
+http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually
+
+- US map: https://cran.r-project.org/web/packages/usmap/vignettes/mapping.html

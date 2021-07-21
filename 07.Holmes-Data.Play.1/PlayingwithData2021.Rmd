@@ -1,0 +1,97 @@
+---
+title: "Playing with Data"
+author: "Josh Holmes"
+date: "Mathcamp 2021"
+output: html_document
+---
+Before beginning any actual analysis on a new dataset, it's always a good idea to get to know your data by playing around a bit.  This can help you find gaps in the data and understand how important variables are coded. Additionally, almost any 'raw' data that you encounter will require some tidying to put everything into a format consistent with the analysis that you plan to conduct.  Learning how to play with data and manipulate it into the formats that you might need is an essential step in preparing a new dataset for statistical analysis.
+
+Thankfully, this isn't just a good practice for learning about a new dataset, it's also a great way to practice your emerging coding skills! In this module, we'll explore some basic data manipulation techniques that you might use whenever you encounter a new dataset. There are many other ways that you may need/want to manipulate your data in the future, but these basic tools will help you get started.
+
+Let's start by learning about a few R packages that are helpful for basic data manipulation.
+
+##Packages
+
+```{r,  warning= FALSE}
+library(dplyr)
+library(tidyverse)
+library(haven)
+library(readxl)
+library(broom)
+```
+
+Here's what these packages provide:
+
+
+*tidyverse*  includes:
+
+1) ggplot2, which implements the Grammar of Graphics. This is probably a slightly more complex way to visualize data than is necessary for basic exploration, but many people prefer it over the base graphics included with R.
+
+2) dplyr: One important contribution of the dplyr package is that it provides a “grammar” (in particular, verbs) for data manipulation and for operating on data frames. 
+
+3) tidyr, which is a nice set of helper functions with an eye toward “tidy data:” a state of affairs where (1) every row in a data object is an observation; (2) every column in that data object is a variable; and (3) every cell in the data object is a single value.
+
+These are major verbs of the tidyr : 
+
+• select: return a subset of the columns of a data frame, using a flexible notation
+• filter: extract a subset of rows from a data frame based on logical conditions
+• arrange: reorder rows of a data frame
+• rename: rename variables in a data frame
+• mutate: add new variables/columns or transform existing variables
+• summarise / summarize: generate summary statistics of different variables in the data frame,
+possibly within strata
+• %>%: the “pipe” operator is used to connect multiple verb actions together into a pipeline
+
+4) readr is a good set of functions for reading in your data.
+
+*haven* and *readxl* are both part of the tidyverse, too, but they are not automatically loaded. These help with reading in data from other programs, such as Stata, SAS, SPSS, and Excel.
+
+*broom* is a tidyverse-compliant way to handle the output of statistical models.
+
+##Exploring Data
+
+Using R, you can quickly review a dataset in table format:
+
+```{r}
+print(table1)
+data.frame(table1)
+table1
+```
+
+This can be helpful, but if you're working with a large dataset, it might get unruly quickly. Let's say that you're particularly interested in particular values within your data.  You can filter on specific values, like a given year or country, with a few simple commands. Here's how you might filter by particular variable:
+
+
+```{r}
+# summarize(table1)
+# learn functions : 1) filter
+# see data collected in the year of 1999
+filter(table1, year==1999) 
+# see only 'China' data
+filter(table1, country=='China')
+#select? : see only country and year column 
+select(table1, country, year)
+```
+
+One thing that you might notice as you explore a dataset is that variable names aren't always helpful.  While in our example, each one makes sense, it's not uncommon for variables to be named using random letters or numbers.  These are hard to keep track of, so you might prefer changing your data so things are more logical for you.  Let's try renaming one of our variables:
+
+```{r}
+# change the name of columm: rename
+rename(table1, numcases = cases)
+```
+
+Now let's say that you find that the dataset you're using doesn't *quite* provide the values that you'll need for your analysis. We're not interested in either the number of cases or the population, but rather the *case ratio*, the proportion of a population that's counted as a 'case.'  While we might simply include the necessary formula as part of our later analysis, it's likely easier to just calculate this out and add a new variable to the table.  You can do that simply as follows: 
+
+```{r}
+#use mutate command to calculate the values of a new variable called 'case_ratio.' We do this by creating a new table that includes the additional variable:
+new_table1 <-mutate(table1, case_ratio = population/cases)
+#now let's take a look at the new data to make sure that our variable is included
+new_table1
+```
+
+Perfect! Now we're familiar with the data that we have and are sure that the value we're really interested in is included.
+
+The type of manipulation and exploration that you use will likely depend on the nature of the data you're using and the analysis that you plan on conducting. You'll likely learn other methods of data manipulation in the program's quantitative methods sequence, but it's always helpful to seek out instructions on how to do the particular manipulation that you want before diving into actual statistical analysis.  Here's a valuable resource for some basic R skills: https://r4ds.had.co.nz/
+
+Now it's your turn to practice:
+
+### Download any dataset what you're interested in, and read that file by using different packages (such as read.csv or readxl, etc).Then, try to manipulate data with what you've learned here. 

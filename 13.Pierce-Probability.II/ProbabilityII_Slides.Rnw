@@ -1,0 +1,442 @@
+\documentclass{beamer}
+
+\usepackage{subcaption}
+\usepackage{graphicx} 
+%\usepackage{harvard}
+\usepackage{setspace}  
+\usepackage{dcolumn}
+\DeclareMathSizes{10}{10}{10}{10}
+\usepackage{indentfirst}
+\usepackage{placeins}
+\setlength{\parindent}{0cm}
+\bibliographystyle{apsr}                  
+\usepackage{scrextend}
+\usepackage{tikz}
+\graphicspath{{./figure/}}
+\usepackage[justification=centering]{caption}
+\captionsetup[figure]{font=small, labelformat=empty}% redefines the caption setup of the figures environment in the beamer class
+\usepackage{lscape}
+\usepackage{wrapfig}
+\usepackage{appendixnumberbeamer}
+\usepackage{mathtools}
+\usepackage{booktabs}
+
+\usetheme{Goettingen}
+\usecolortheme{fly}
+
+
+\setbeamercolor{frametitle}{fg=blue}
+\setbeamercolor{title}{fg=blue}
+
+\title[Probability II]
+{Probability II: Distributions and Random Variables}
+\author[Pierce] % (optional, for multiple authors)
+{Justin D. Pierce}
+\institute[University of Illinois] % (optional)
+{
+ 
+  Department of Political Science\\
+  University of Illinois
+  
+}
+\date{8/19/2021}
+\begin{document}
+
+
+<<Set up, echo=FALSE,warning=FALSE, error=FALSE, results='hide', message=FALSE>>=
+# setwd("C:/Users/Justin Pierce/Dropbox/Personal Files/EUODT")
+opts_chunk$set(out.height="3in",out.width="4in", fig.show="hold", fig.align="center", echo=F, cache=T, warning=F, message=F, error = F, results="hide")
+
+library(ggplot2)
+library(modelr)
+library(sjmisc)
+library(kableExtra)
+@
+
+%%%%%%%%%%Title Page%%%%%%%%%%
+\frame{\titlepage} 
+
+%%%%%%%%%Classes of Data%%%%%%%%%%
+\begin{frame}
+\frametitle{Classes of Data}
+We'll look at two classes of data: 
+\begin{itemize}
+\item Discrete
+\item Continuous
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Discrete Data%%%%%%%%%
+\begin{frame}
+\frametitle{Discrete Data}
+\begin{columns}[T]
+	\begin{column}{.5\textwidth}
+		\begin{block}{Example: Rolling two d6's}
+		\begin{itemize}
+		\item Roll can be anywhere from 2 through 12 
+		\item Are \textbf{discrete} outcomes: can't have 4.5 
+		\item We can graph these discrete outcomes, and their frequency, in a barplot
+		\end{itemize}
+		\end{block}
+	\end{column}
+	\begin{column}{.5\textwidth}
+		\begin{block}{}
+			% Your image included here
+			\includegraphics[width=.5\textwidth]{DiceRoller.png}
+		\end{block}
+	\end{column}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%Discrete Data II: Dice Roll%%%%%%%%%
+\begin{frame}
+\frametitle{Dice Roll outcomes and their frequency}
+<<DieGraph>>=
+Outcome=c(2,3,4,5,6,7,8,9,10,11,12)
+NumCombos=c(1,2,3,4,5,6,5,4,3,2,1)
+DieRolls=cbind(Outcome, NumCombos)
+DieRolls=as.data.frame(DieRolls)
+
+Dice=ggplot(DieRolls, aes(x=Outcome, y=NumCombos)) +
+    geom_bar(stat="identity", fill="steelblue") +
+    ylab("Frequency") +
+    ggtitle("Outcomes from rolling two dice")+
+    theme_minimal()
+Dice
+@
+\end{frame}
+
+%%%%%%%%%Continuous Data%%%%%%%%%
+\begin{frame}
+\frametitle{Continuous Data}
+\begin{itemize}
+\item Discrete data can only have certain outcomes; Continuous however can take on any value within range. 
+\item Example: height 
+\item Typically measure in feet \& inches or centimeters, but can take on any value between full inches or centimeters.
+\item We graph these outcomes and their frequency with a histogram
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Continuous Data II: Height%%%%%%%%%
+\begin{frame}
+<<>>=
+data("heights")
+heights$height2=heights$height/12
+
+heightz=ggplot(heights, aes(x=height2)) +
+    geom_histogram(binwidth = (0.1),boundary=0, color="black", fill="steelblue")+
+    xlab("Heights (in feet & inches)")+
+    ylab("Frequency")+
+    ggtitle("Height frequency histogram")+
+    theme_minimal()
+heightz
+@
+\end{frame}
+
+%%%%%%%%%Types of Data%%%%%%%%%
+\begin{frame}
+\frametitle{Types of Data}
+In addition to the classes, there are four types of data
+\begin{itemize}
+\item Categorical(or nominal)
+\item Ordinal
+\item Interval 
+\item Ratio 
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Categorical Data%%%%%%%%%
+\begin{frame}
+\frametitle{Categorical Data}
+Aka Nominal Data.\\
+Has 2+ categories which data can fall into.\\
+Examples: 
+\begin{itemize}
+\item hair or eye color
+\item Party identification 
+\end{itemize}
+NOTE: die rolling not. Instead, is....
+\end{frame}
+
+%%%%%%%%%Ordinal Data%%%%%%%%%
+\begin{frame}
+\frametitle{Ordinal Data}
+Similar to categorical, BUT categories have an order/ranking to them. \\
+Example: Presidential job approval:\\
+Do you approve of Joe Biden's job performance?
+\begin{enumerate}
+\item I approve a great deal
+\item I approve a moderate amount 
+\item I neither approve or disapprove 
+\item I disapprove a moderate amount
+\item I disapprove a great deal 
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%Interval Data%%%%%%%%%
+\begin{frame}
+\frametitle{Interval Data}
+Similar to ordinal, but the groups are equally spaced. \\
+Can be either continuous or discrete; different ways of classifying. \\
+Example: What is your income?
+\begin{itemize}
+\item Ranges: \$40-45k, \$46-50K, \$51-55K, etc
+\item Continuous at \$1 intervals 
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Ratio Data%%%%%%%%%
+\begin{frame}
+\frametitle{Ratio Data}
+Similar to interval, but has a meaningful 0 value. \\
+Likewise, can be continuous or discrete. \\ 
+Example: How much time do you spend watching TV?
+\begin{itemize}
+\item Ranges: 0-2 hours, 3-5 hours, 6-8 hours, etc  
+\item Or continuous with 1 hour intervals 
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Types Conclu%%%%%%%%%
+\begin{frame}
+Thus, 
+\begin{itemize}
+\item Categorical and ordinal data is always discrete 
+\item Interval and ratio data can be discrete or continuous 
+\end{itemize}
+<<results='asis'>>=
+Types=c("Categorical", "Ordinal", "Interval", "Ratio")
+Description=c("Distinct Categories, w/o order", "Distinct Categories w/ order", "Ordered with equally spaced groups", "Ordered with eqaully spaced groups AND a meaningful 0")
+Classes=c("Dis Only", "Dis Only", "Dis or Cont", "Dis or Cont")
+TypesofData=cbind(Types,Description, Classes) 
+
+kable(TypesofData, format="latex",booktabs=T)%>%
+     column_spec(2, width="4cm")%>% 
+    column_spec(3, width="2cm")%>% 
+        kable_styling(latex_options=c("HOLD_position"),position="center",full_width = F)
+
+@
+
+Why do we care?? \\
+Changes how we study our data
+\end{frame}
+
+%%%%%%%%%Random Variables%%%%%%%%%
+\begin{frame}
+\frametitle{Random Variables}
+\begin{itemize}
+\item Def: a variable whose value is the outcome of a random event. 
+\pause
+\item \textbf{More formally}: a random variable is a function that assigns a number to each point in a sample space.
+\pause
+\item For social science purposes, more intuitive definition: 
+\pause
+\item A random variable is a \textit{process} or \textit{mechanism} that assigns the value of a variable in each case.
+\item We write this as X(x), where X=our function, x=our variable.
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%PS RV%%%%%%%%%
+\begin{frame}
+\frametitle{Political Science Example\footnotemark}
+Let's say we have a sample space, \textit{S}, which is a list of countries, i.e. \textit{S}={a list of countries}, with an individual country \textit{s} $\in$ \textit{S}. \\
+\vspace{5mm}
+\pause
+Country, \textit{s}, GDP per capita in 1990 can be thought of as a random variable: X(s) = 1990 GPD per capita: 
+\begin{itemize}
+\item X(Ghana)=\$902
+\item X(France)=\$13,904
+\end{itemize}
+\footnotetext[1]{Example comes from James Fearon. See extra readings for link.}
+\end{frame}
+
+%%%%%%%%%Distro Intro%%%%%%%%%
+\begin{frame}
+\frametitle{Distributions}
+A list of all the possible outcomes of a random variable along with the corresponding probability with which they occur.\\
+<<Dice2, out.height="2in", out.width="3in">>=
+Dice
+@
+This is a probability distribution for rolling two dice. 
+\end{frame}
+
+%%%%%%%%% PMF %%%%%%%%%
+\begin{frame}
+\frametitle{Discrete Distribution functions}
+\textbf{Probability Mass Function (pmf):} For a discrete random variable, the pmf f(x) tells the probability that a given value will occur P(X=x).\\
+Key properties: 
+\begin{itemize}
+\item 0 $\geq$ f(x) $\leq$ 1
+\item $\sum$ f(x) = 1
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Discrete CDF%%%%%%%%%
+\begin{frame}
+\frametitle{Discrete Distribution functions II}
+\textbf{Cumulative Distribution Function (CDF)}: For a discrete random variable, the CDF F(x) is the function that tells us the cumulative probability that a given value, x, or any value smaller than x will occur. \\
+F(X)=P(X $\leq$ x)\\
+For discrete variables, the equation for a CDF is: 
+F(X)=$\sum_{i=0}^{x}$f(x)
+\end{frame}
+
+%%%%%%%%% PDF %%%%%%%%%
+\begin{frame}
+\frametitle{Continuous Distribution functions}
+\textbf{Probability Density Functions (PDF):} For a continuous random variable, the PDF f(X) is a function that tells us the probability that a random variable will fall within a particular range of values. \\
+Key properties: 
+\begin{itemize}
+\item P(a $\leq$ X $\leq$ b) = $\int_{a}^{b}$f(x)dx
+\item f(x) $\geq$ 0
+\item $\int_{-\infty}^{\infty}$f(x)dx = 1
+\item P(X=x) = 0 (because the integral at a single point is 0)
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Cont CDF%%%%%%%%%
+\begin{frame}
+\frametitle{Cont. Distribution functions II}
+\textbf{Cumulative Distribution Function (CDF)}: For a continuous random variable, the CDF F(x) is the function that tells us the cumulative probability that a given value, x, or any value smaller than x will occur. \\
+\vspace{2mm}
+Note, same name and concept as the CDF of a discrete variable. The difference is how we calculate it: \\
+\vspace{2mm}
+F(x)=$\int_{-\infty}^{x}f(\mu)d(\mu)$
+\end{frame}
+
+%%%%%%%%%Distro Describ%%%%%%%%%
+\begin{frame}
+\frametitle{Describing Distributions}
+Describe the shape of distribution through key \textit{parameters}
+\begin{itemize}
+\item Mean (aka expected value)
+\item Variance
+\item Standard Deviation
+\end{itemize}
+\end{frame}
+
+%%%%%%%%% Mean %%%%%%%%%
+\begin{frame}
+\frametitle{Describing Distributions: the Mean}
+A description of the central tendency of a distribution or variable. \\ 
+\vspace{2mm}
+An expectation: expected value or weighted average that X will take on after many trials. \\ 
+\vspace{2mm}
+Represented by E[X] or $\mu$.\\
+\vspace{2mm}
+Calculated: 
+\begin{itemize}
+\item Discrete: $\mu = \sum$ xf(x)
+\item Continuous: $\mu = \int$ xf(x)dx
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%% Variance %%%%%%%%%
+\begin{frame}
+\frametitle{Describing Distributions:\\ the Variance}
+A measure of the spread of a distribution/variable. \\
+\vspace{2mm}
+Also an expectation: it is the weighted average of the squares of the distance between X and E[X].\\
+\vspace{2mm}
+Represented by $\sigma^2$ (More on that in a second).\\
+\vspace{2mm}
+Calculated:
+\begin{itemize}
+\item Discrete: $Var[X]=E[(X-E(X)^2)]=E[X^2]-(E[X])^2$
+\item Continuous: $Var[X]=E[(X-\mu)^2]=\int(x-\mu)^2f(x)dx$
+\end{itemize}
+\end{frame}
+
+%%%%%%%%% SD %%%%%%%%%
+\begin{frame}
+\frametitle{Describing Distributions: \\ the Standard Deviation}
+Another measure of how spread out the numbers are in a distribution or variable.\\
+\vspace{2mm}
+Represented by $\sigma$ \\
+\vspace{2mm}
+Calculated: 
+\begin{itemize}
+\item SD[X]=$\sqrt{Var[X]}$
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%Nomral Distro%%%%%%%%%
+\begin{frame}
+\frametitle{Distribution Example: The Normal Distribution}
+\begin{columns}[T]
+	\begin{column}{.5\textwidth}
+		\begin{block}{Aka "Gausssian" Distribution}
+		Key features:
+		\begin{itemize}
+		\item "Bell Shaped" and symmetrical
+		\item The mean, median and mode are all equal
+		\item Has mean = $\mu$, standard deviation = $\sigma$ and variance = $\sigma^2$
+		\end{itemize}
+		\end{block}
+	\end{column}
+	\begin{column}{.5\textwidth}
+		\begin{block}{}
+			% Your image included here
+			\includegraphics[width=\textwidth]{NormalDist.png}
+		\end{block}
+	\end{column}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%Nomral Distro II%%%%%%%%%
+\begin{frame}
+\frametitle{The Normal Distribution continued}
+Why so important?
+\begin{itemize}
+\item Differences of means tests, such as t-Tests and ANOVA assume normal distributions. 
+\item Regression assumes residuals normally distributed. 
+\item Need to account if different.
+\item Often fine assumption because of the \textbf{Central Limit Theorem}.
+\end{itemize}
+\end{frame}
+
+%%%%%%%%% CLT %%%%%%%%%
+\begin{frame}
+\frametitle{Central Limit Theorem}
+Def: The sampling distribution of the sample means approaches a normal distribution as the sample size gets larger.\\
+\vspace{2mm}
+$\overline{X_n}=\frac{x_1 + x_2 + ... + x_n}{n}$ $\rightarrow \cal{N}$($\mu$, $\frac{\sigma^2}{n}$), $n \rightarrow \infty$\\
+\vspace{2mm}
+Typically works in sample sizes larger than 30.\\
+Part of why sample sizes are important.
+\end{frame}
+
+%%%%%%%%% Law of Large Numbers %%%%%%%%%
+\begin{frame}
+\frametitle{Law of Large Numbers}
+As sample size grows, its mean gets closer to the population mean. \\ 
+\vspace{2mm}
+$\overline{X_n}=\frac{x_1 + x_2 + ... + x_n}{n}$ $\rightarrow \mu, n \rightarrow \infty$\\
+Another reason why we like large samples!
+\end{frame}
+
+%%%%%%%%% Samples vs Populations %%%%%%%%%
+\begin{frame}
+\frametitle{Samples vs Populations}
+\begin{itemize}
+\item \textbf{Population:} the group that we want to draw conclusions about. 
+\item \textbf{Sample:} the group of observations we will collect data from.
+\end{itemize}
+For example: Might be interested in population of US voters. \\
+\vspace{2mm}
+Too large a group to distribute survey to.\\
+\vspace{2mm}
+Instead get a sample which is ideally: 
+\begin{itemize}
+\item Randomly drawn and representative. 
+\item Large enough to make inferences from.
+\end{itemize}
+\end{frame}
+
+%%%%%%%%% Outro %%%%%%%%%
+\begin{frame}
+Questions? \\
+Justin- jdpierc2@illinois.edu\\
+Also see go.illinois.edu/surveystatsdata for CITL Data Analytics Services.\\
+\end{frame}
+\end{document}
